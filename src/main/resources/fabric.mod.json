@@ -1,0 +1,23 @@
+{
+	"schemaVersion": 1,
+	"id": "fakescoreboard",
+	"version": "${version}",
+	"name": "Fake Scoreboard",
+	"description": "Client-side stats panel: name, money, shards, kills, deaths, playtime. Edit with /sb.",
+	"authors": [
+		"You"
+	],
+	"license": "MIT",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"dev.fakescoreboard.FakeScoreboardMod"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.18.0",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

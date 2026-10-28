@@ -15,14 +15,16 @@ public class ScoreboardConfig {
 	public static ScoreboardConfig INSTANCE = new ScoreboardConfig();
 
 	public boolean enabled = true;
+	public boolean background = false;
 	public String name = "";
 	public String money = "72B";
 	public String shards = "8.2K";
 	public String kills = "894";
 	public String deaths = "495";
 	public String time = "84d 22h";
-	public int x = 6;
-	public int y = 40;
+	/** Смещение от положения "справа по центру" */
+	public int offX = 0;
+	public int offY = 0;
 
 	public static void load() {
 		try {

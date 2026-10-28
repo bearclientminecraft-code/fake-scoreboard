@@ -9,43 +9,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.Identifier;
 
 public final class ScoreboardHud {
-	// Иконки 8x8 (# = закрашенный пиксель)
-	private static final String[] GEM = {
-			"...##...",
-			"..####..",
-			".######.",
-			"########",
-			".######.",
-			"..####..",
-			"...##...",
-			"........" };
-	private static final String[] SWORD = {
-			".....###",
-			"....###.",
-			"...###..",
-			"#.###...",
-			".###....",
-			"..#.....",
-			".##.....",
-			"#......." };
-	private static final String[] SKULL = {
-			".######.",
-			"########",
-			"##.##.##",
-			"##.##.##",
-			"########",
-			".######.",
-			"..#.#.#.",
-			"..#####." };
-	private static final String[] CLOCK = {
-			"..####..",
-			".#....#.",
-			"#..#...#",
-			"#..#...#",
-			"#..###.#",
-			".#....#.",
-			"..####..",
-			"........" };
+	// Иконки-символы (вместо сотен пикселей: так почти нет нагрузки)
+	private static final String[] ICONS = { "$", "\u2726", "\u2694", "\u2620", "\u25D4" };
+	private static final int[] ICON_COLORS = { 0xFF55FF55, 0xFFAA00FF, 0xFFFF3333, 0xFFFF8800, 0xFFFFCC00 };
 
 	private ScoreboardHud() {
 	}
@@ -61,16 +27,6 @@ public final class ScoreboardHud {
 		return s.replace('&', '\u00a7');
 	}
 
-	private static void icon(GuiGraphics g, String[] bitmap, int x, int y, int color) {
-		for (int r = 0; r < bitmap.length; r++) {
-			for (int col = 0; col < bitmap[r].length(); col++) {
-				if (bitmap[r].charAt(col) == '#') {
-					g.fill(x + col, y + r, x + col + 1, y + r + 1, color);
-				}
-			}
-		}
-	}
-
 	private static void render(GuiGraphics g, DeltaTracker delta) {
 		ScoreboardConfig c = ScoreboardConfig.INSTANCE;
 		Minecraft mc = Minecraft.getInstance();
@@ -83,38 +39,32 @@ public final class ScoreboardHud {
 		String[] values = { fmt(c.money), fmt(c.shards), fmt(c.kills), fmt(c.deaths), fmt(c.time) };
 
 		int pad = 3;
-		int lineH = 11;
-		int iconW = 8;
-		int gap = 3;
+		int lineH = 10;
+		int iconW = 9;
+		int margin = 2;
 
 		int maxRow = 0;
 		for (String v : values) {
 			maxRow = Math.max(maxRow, font.width(v));
 		}
-		int w = pad * 2 + Math.max(font.width(name), iconW + gap + maxRow);
-		int h = pad * 2 + lineH * 6 - 2;
-		int x = c.x;
-		int y = c.y;
+		int w = pad * 2 + Math.max(font.width(name), iconW + maxRow);
+		int h = pad * 2 + lineH * 6 - 1;
 
-		// фон
-		g.fill(x, y, x + w, y + h, 0x78000000);
+		int sw = mc.getWindow().getGuiScaledWidth();
+		int sh = mc.getWindow().getGuiScaledHeight();
+		int x = sw - w - margin + c.offX;
+		int y = (sh - h) / 2 + c.offY;
 
-		// имя
+		if (c.background) {
+			g.fill(x, y, x + w, y + h, 0x78000000);
+		}
+
 		g.drawString(font, name, x + pad, y + pad, 0xFFFFFFFF, true);
 
-		// строки со значками
-		int ix = x + pad;
-		int tx = ix + iconW + gap;
 		for (int i = 0; i < 5; i++) {
 			int ry = y + pad + lineH * (i + 1);
-			switch (i) {
-				case 0 -> g.drawString(font, "$", ix + 1, ry, 0xFF55FF55, true);
-				case 1 -> icon(g, GEM, ix, ry, 0xFFAA00FF);
-				case 2 -> icon(g, SWORD, ix, ry, 0xFFFF3333);
-				case 3 -> icon(g, SKULL, ix, ry, 0xFFFF8800);
-				default -> icon(g, CLOCK, ix, ry, 0xFFFFCC00);
-			}
-			g.drawString(font, values[i], tx, ry, 0xFFFFFFFF, true);
+			g.drawString(font, ICONS[i], x + pad, ry, ICON_COLORS[i], true);
+			g.drawString(font, values[i], x + pad + iconW, ry, 0xFFFFFFFF, true);
 		}
 	}
 }
